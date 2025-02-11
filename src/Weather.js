@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Weather.css";
+import axios from "axios";
 
-export default function Weather() {
-    return (
+export default function Weather(props) {
+    const [weatherData, setWeatherData] = useState({ ready: false});
+
+    function handleResponse(response) {
+        setWeatherData({
+            ready: true,
+            city: response.data.city,
+            date: "Tuesday 17:18",
+            description: response.data.condition.description,
+            icon: response.data.condition.icon_url,
+            temperature: response.data.temperature.current,
+            humidity: response.data.temperature.humidity,
+            wind: response.data.wind.speed,
+        })
+
+    }
+
+    
+
+
+    if (weatherData.ready) {
+        return (
         <div className="Weather">
             <form>
                 <div className="row">
@@ -14,27 +35,31 @@ export default function Weather() {
                 </div>
                 </div>
             </form>
-            <h1>Houston</h1>
+            <h1>{weatherData.city}</h1>
             <ul>
-                <li>Monday 18:15</li>
-                <li>Mostly Cloudy</li>
+                <li>{weatherData.date}</li>
+                <li className="text-capitalize">{weatherData.description}</li>
             </ul>
             <div className="row description">
                 <div className="col-6">
-                    <img src="https://ssl.gstatic.com/onebox/weather/64/partly_cloudy.png" alt="Weather icon" className="icon" />
-                   <span className="temperature">71</span> <span className="unit">°F</span>
+                    <img src={weatherData.icon} alt={weatherData.description} className="icon" />
+                   <span className="temperature">{Math.round(weatherData.temperature)}</span> <span className="unit">°F</span>
                 </div>
                 <div className="col-6">
                     <ul>
-                        <li>Precipitation: 2%</li>
-                        <li>Humidity: 76%</li>
-                        <li>Wind: 11 mph</li>
+                        <li>Humidity: {weatherData.humidity}%</li>
+                        <li>Wind: {Math.round(weatherData.wind)} mph</li>
                     </ul>
                 </div>
-
-
             </div>
-
         </div>
-    )
+        )
+    }
+    else {
+        const apiKey = "0cca9cddf1f4t4bb307e8bfo1fa213f2";
+        let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${props.defaultCity}&key=${apiKey}&units=imperial`;
+        axios.get(apiUrl).then(handleResponse);
+
+        return "Loading. . .";
+    }
 }
