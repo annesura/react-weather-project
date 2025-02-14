@@ -34,6 +34,11 @@
     top: -18px;
 }
 
+.Weather .iconTemperature {
+    position: relative;
+    left: -17px;
+}
+
 .Weather .temperature {
     font-size: 64px;
     font-weight: bold;
